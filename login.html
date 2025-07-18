@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pet Adoption - Login / Register</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            /* Attractive gradient background */
+            background: linear-gradient(135deg, #ce71bd 0%, #43c6ac 100%);
+            background-attachment: fixed;
+        }
+        .container {
+            background: rgba(255,255,255,0.85);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            padding: 32px 24px;
+            max-width: 400px;
+            margin: 40px auto;
+        }
+        header, footer {
+            background:  #b63ba7;
+        }
+    </style>
+    <style>
+        /* Additional styles for toggle buttons */
+        .toggle-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .toggle-buttons button {
+            background-color: #b25c9d;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 5px 5px 0 0;
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-buttons button.active {
+            background-color: #0056b3;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+         <span style="font-family:'Pacifico',cursive;font-size:2rem;color:#fff;letter-spacing:2px; margin-left:4px;">Love Pets</span>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <div style="display: inline-flex; align-items: center; background: #b25c9d; border-radius: 5px; padding: 5px 10px;">
+                        <a href="login.html" class="active" style="color: white; text-decoration: none; margin-right: 10px;">Login</a>
+                        <button id="logout-button" style="background:none; border:none; color:white; cursor:pointer; font-size:1em; padding:0;">Logout</button>
+                    </div>
+                </li>
+                <li><a href="all-pets.html">See All Pets</a></li>
+                 <li><a href="#" id="show-adopted-pets">Adopted Pet's</a></li>
+                <li><a href="buy.html">Adopt a Pet</a></li>
+                <li><a href="add-pet.html">Add Pet</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="toggle-buttons">
+            <button id="login-toggle" class="active">Login</button>
+            <button id="register-toggle">Register</button>
+        </div>
+
+        <section id="login-section" class="form-section active">
+            <h2>Login</h2>
+            <form id="login-form" novalidate>
+                <div>
+                    <label for="login-username">Username or Email</label>
+                    <input type="text" id="login-username" name="login-username" required />
+                </div>
+                <div>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="login-password" required minlength="6" />
+                </div>
+                <button type="submit">Login</button>
+                <div id="login-message" class="message" style="display:none;"></div>
+            </form>
+        </section>
+
+        <section id="register-section" class="form-section">
+            <h2>Register</h2>
+            <form id="register-form" novalidate>
+                <div>
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" name="register-username" required />
+                </div>
+                <div>
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="register-email" required />
+                </div>
+                <div>
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="register-password" required minlength="6" />
+                </div>
+                <div>
+                    <label for="register-confirm-password">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" name="register-confirm-password" required minlength="6" />
+                </div>
+                <button type="submit">Register</button>
+                <div id="register-message" class="message" style="display:none;"></div>
+            </form>
+        </section>
+    </main>
+
+    <section id="adopted-pets-section" style="display:none; max-width: 900px; margin: 30px auto; background: rgba(255,255,255,0.95); padding: 20px 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2>Adopted Pets</h2>
+        <div id="adopted-pets-list" style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
+            <!-- Adopted pets will be rendered here -->
+        </div>
+        <button id="close-adopted-pets" style="margin-top: 20px; padding: 8px 18px; background: #b63ba7; color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+    </section>
+
+    <footer>
+        &copy; 2025 Pet Adoption. All rights reserved.
+    </footer>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgtCG6bqpgEBRp-RerK1tr0sEFDwgNpXc",
+            authDomain: "lovepets-bf0c0.firebaseapp.com",
+            databaseURL: "https://lovepets-bf0c0-default-rtdb.firebaseio.com",
+            projectId: "lovepets-bf0c0",
+            storageBucket: "lovepets-bf0c0.appspot.com",
+            messagingSenderId: "601022176532",
+            appId: "1:601022176532:web:1a84109fdd552a350df601",
+            measurementId: "G-5V34QYYF2E"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const loginToggle = document.getElementById('login-toggle');
+        const registerToggle = document.getElementById('register-toggle');
+        const loginSection = document.getElementById('login-section');
+        const registerSection = document.getElementById('register-section');
+
+        loginToggle.addEventListener('click', () => {
+            loginToggle.classList.add('active');
+            registerToggle.classList.remove('active');
+            loginSection.classList.add('active');
+            registerSection.classList.remove('active');
+        });
+
+        registerToggle.addEventListener('click', () => {
+            registerToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+            registerSection.classList.add('active');
+            loginSection.classList.remove('active');
+        });
+
+        // Login form handling (Firebase Auth)
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginMessage.style.display = 'none';
+            if (!loginForm.checkValidity()) {
+                loginForm.reportValidity();
+                return;
+            }
+            const usernameOrEmail = loginForm['login-username'].value.trim();
+            const password = loginForm['login-password'].value.trim();
+            // Try login with email
+            try {
+                await signInWithEmailAndPassword(auth, usernameOrEmail, password);
+                localStorage.setItem('currentUser', JSON.stringify({ email: usernameOrEmail }));
+                loginMessage.textContent = 'Login successful! Redirecting...';
+                loginMessage.className = 'message success';
+                loginMessage.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                loginMessage.textContent = 'Invalid email or password.';
+                loginMessage.className = 'message error';
+                loginMessage.style.display = 'block';
+            }
+        });
+
+        // Register form handling (Firebase Auth)
+        const registerForm = document.getElementById('register-form');
+        const registerMessage = document.getElementById('register-message');
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            registerMessage.style.display = 'none';
+            if (!registerForm.checkValidity()) {
+                registerForm.reportValidity();
+                return;
+            }
+            const username = registerForm['register-username'].value.trim();
+            const email = registerForm['register-email'].value.trim();
+            const password = registerForm['register-password'].value.trim();
+            const confirmPassword = registerForm['register-confirm-password'].value.trim();
+            if (password !== confirmPassword) {
+                registerMessage.textContent = 'Passwords do not match.';
+                registerMessage.className = 'message error';
+                registerMessage.style.display = 'block';
+                return;
+            }
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                // Optionally store username in localStorage or Firestore if needed
+                localStorage.setItem('currentUser', JSON.stringify({ email }));
+                registerMessage.textContent = 'Registration successful! You can now login.';
+                registerMessage.className = 'message success';
+                registerMessage.style.display = 'block';
+                registerForm.reset();
+                // Switch to login form after registration
+                loginToggle.click();
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    registerMessage.textContent = 'Email already registered.';
+                } else if (error.code === 'auth/invalid-email') {
+                    registerMessage.textContent = 'Invalid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    registerMessage.textContent = 'Password should be at least 6 characters.';
+                } else {
+                    registerMessage.textContent = 'Registration failed. Please try again.';
+                }
+                registerMessage.className = 'message error';
+                registerMessage.style.display = 'block';
+            }
+        });
+
+        // Adopted pets section elements
+        const adoptedPetsSection = document.getElementById('adopted-pets-section');
+        const adoptedPetsList = document.getElementById('adopted-pets-list');
+        const showAdoptedPetsBtn = document.getElementById('show-adopted-pets');
+        const closeAdoptedPetsBtn = document.getElementById('close-adopted-pets');
+
+        // Function to load adopted pets from localStorage and display
+        function loadAdoptedPets() {
+            adoptedPetsList.innerHTML = '';
+            const adoptedPets = JSON.parse(localStorage.getItem('adoptedPets')) || [];
+            if (adoptedPets.length === 0) {
+                adoptedPetsList.textContent = 'No pets have been adopted yet.';
+                return;
+            }
+            adoptedPets.forEach(pet => {
+                const petCard = document.createElement('div');
+                petCard.className = 'pet-card';
+                petCard.style.width = '250px';
+                petCard.style.background = 'white';
+                petCard.style.borderRadius = '10px';
+                petCard.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                petCard.style.overflow = 'hidden';
+                petCard.style.textAlign = 'center';
+                petCard.style.paddingBottom = '16px';
+                let photoHtml = '';
+                if (pet.photos && pet.photos.length > 0) {
+                    photoHtml = `<img src="${pet.photos[0]}" alt="${pet.petName}" style="width:100%; height:180px; object-fit:cover; border-bottom: 2px solid #b63ba7;">`;
+                } else if (pet.photo) {
+                    photoHtml = `<img src="${pet.photo}" alt="${pet.petName}" style="width:100%; height:180px; object-fit:cover; border-bottom: 2px solid #b63ba7;">`;
+                } else {
+                    photoHtml = `<img src="https://via.placeholder.com/250x180?text=No+Image" alt="No Image" style="width:100%; height:180px; object-fit:cover; border-bottom: 2px solid #b63ba7;">`;
+                }
+                petCard.innerHTML = `
+                    ${photoHtml}
+                    <h3 style="color: #b63ba7; margin-top: 12px;">${pet.petName}</h3>
+                    <p style="font-style: italic; color: #555;">${pet.description || ''}</p>
+                    <div class="seller-info" style="font-size: 0.85em; color: #444; margin: 0 12px 12px 12px; text-align: left; background: #f9f9f9; padding: 8px; border-radius: 6px; box-shadow: inset 0 0 5px rgba(182,59,167,0.1);">
+                        <strong>Adopted By:</strong> ${pet.adoptedBy || 'Unknown'}<br/>
+                        <strong>Contact:</strong> ${pet.adopterEmail || 'N/A'}<br/>
+                        <strong>Message:</strong> ${pet.adoptionMessage || ''}
+                    </div>
+                `;
+                adoptedPetsList.appendChild(petCard);
+            });
+        }
+
+        // Show adopted pets section on clicking menu item
+        showAdoptedPetsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadAdoptedPets();
+            adoptedPetsSection.style.display = 'block';
+            window.scrollTo({ top: adoptedPetsSection.offsetTop, behavior: 'smooth' });
+        });
+
+        // Close adopted pets section
+        closeAdoptedPetsBtn.addEventListener('click', () => {
+            adoptedPetsSection.style.display = 'none';
+        });
+
+        // Logout button functionality (Firebase Auth)
+        const logoutButton = document.getElementById('logout-button');
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (e) {}
+            localStorage.removeItem('currentUser');
+            alert('You have been logged out.');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
