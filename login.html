@@ -136,20 +136,29 @@
     </footer>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgtCG6bqpgEBRp-RerK1tr0sEFDwgNpXc",
-            authDomain: "lovepets-bf0c0.firebaseapp.com",
-            databaseURL: "https://lovepets-bf0c0-default-rtdb.firebaseio.com",
-            projectId: "lovepets-bf0c0",
-            storageBucket: "lovepets-bf0c0.appspot.com",
-            messagingSenderId: "601022176532",
-            appId: "1:601022176532:web:1a84109fdd552a350df601",
-            measurementId: "G-5V34QYYF2E"
+        <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAYLB7tGlpW52JdT-BXjQ6ah9DN9Z-I8d8",
+    authDomain: "lovepets-9bd0e.firebaseapp.com",
+    projectId: "lovepets-9bd0e",
+    storageBucket: "lovepets-9bd0e.firebasestorage.app",
+    messagingSenderId: "1035341772081",
+    appId: "1:1035341772081:web:18239257fb6b69a7446c10",
+    measurementId: "G-J6WJMR3117"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
         };
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -320,3 +329,4 @@
     </script>
 </body>
 </html>
+
